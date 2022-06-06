@@ -1,17 +1,15 @@
 <?php
 class Api_Trade_Payeer
 {
-    private $arParams = array();
-    private $arError = array();
+    private $arError = [];
 
 
-    public function __construct($params = array())
+    public function __construct(private array $arParams = [])
     {
-        $this->arParams = $params;
     }
 
 
-    private function Request($req = array())
+    private function Request($req = [])
     {
         $msec = round(microtime(true) * 1000);
         $req['post']['ts'] = $msec;
@@ -30,11 +28,11 @@ class Api_Trade_Payeer
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Content-Type: application/json",
             "API-ID: ".$this->arParams['id'],
             "API-SIGN: ".$sign
-        ));
+        ]);
 
         $response = curl_exec($ch);
         curl_close($ch);
@@ -59,9 +57,9 @@ class Api_Trade_Payeer
 
     public function Info()
     {
-        $res = $this->Request(array(
+        $res = $this->Request([
             'method' => 'info',
-        ));
+        ]);
 
         return $res;
     }
@@ -69,12 +67,12 @@ class Api_Trade_Payeer
 
     public function Orders($pair = 'BTC_USDT')
     {
-        $res = $this->Request(array(
+        $res = $this->Request([
             'method' => 'orders',
-            'post' => array(
+            'post' => [
                 'pair' => $pair,
-            ),
-        ));
+            ],
+        ]);
 
         return $res['pairs'];
     }
@@ -82,42 +80,42 @@ class Api_Trade_Payeer
 
     public function Account()
     {
-        $res = $this->Request(array(
+        $res = $this->Request([
             'method' => 'account',
-        ));
+        ]);
 
         return $res['balances'];
     }
 
 
-    public function OrderCreate($req = array())
+    public function OrderCreate($req = [])
     {
-        $res = $this->Request(array(
+        $res = $this->Request([
             'method' => 'order_create',
             'post' => $req,
-        ));
+        ]);
 
         return $res;
     }
 
 
-    public function OrderStatus($req = array())
+    public function OrderStatus($req = [])
     {
-        $res = $this->Request(array(
+        $res = $this->Request([
             'method' => 'order_status',
             'post' => $req,
-        ));
+        ]);
 
         return $res['order'];
     }
 
 
-    public function MyOrders($req = array())
+    public function MyOrders($req = [])
     {
-        $res = $this->Request(array(
+        $res = $this->Request([
             'method' => 'my_orders',
             'post' => $req,
-        ));
+        ]);
 
         return $res['items'];
     }
