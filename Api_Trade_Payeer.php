@@ -1,37 +1,37 @@
 <?php
+
 class Api_Trade_Payeer
 {
     private $arError = [];
-
 
     public function __construct(private array $arParams = [])
     {
     }
 
-
-    private function Request($req = [])
+    private function Request(array $req = [])
     {
         $msec = round(microtime(true) * 1000);
         $req['post']['ts'] = $msec;
 
         $post = json_encode($req['post']);
 
-        $sign = hash_hmac('sha256', $req['method'].$post, $this->arParams['key']);
+        $sign = hash_hmac('sha256', $req['method'] . $post, $this->arParams['key']);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://payeer.com/api/trade/".$req['method']);
+
+        $url = "https://payeer.com/api/trade/" . $req['method'];
+        curl_setopt($ch, CURLOPT_URL, $url);
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
-        //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Content-Type: application/json",
-            "API-ID: ".$this->arParams['id'],
-            "API-SIGN: ".$sign
+            "API-ID: " . $this->arParams['id'],
+            "API-SIGN: " . $sign
         ]);
 
         $response = curl_exec($ch);
@@ -39,8 +39,7 @@ class Api_Trade_Payeer
 
         $arResponse = json_decode($response, true);
 
-        if ($arResponse['success'] !== true)
-        {
+        if ($arResponse['success'] !== true) {
             $this->arError = $arResponse['error'];
             throw new Exception($arResponse['error']['code']);
         }
@@ -55,7 +54,7 @@ class Api_Trade_Payeer
     }
 
 
-    public function Info($req = [])
+    public function Info(array $req = []): array
     {
         $res = $this->Request([
             'method' => 'info',
@@ -65,8 +64,7 @@ class Api_Trade_Payeer
         return $res;
     }
 
-
-    public function Orders($pair = 'BTC_USDT')
+    public function Orders(string $pair = 'BTC_USDT'): array
     {
         $res = $this->Request([
             'method' => 'orders',
@@ -78,8 +76,7 @@ class Api_Trade_Payeer
         return $res['pairs'];
     }
 
-
-    public function Account()
+    public function Account(): array
     {
         $res = $this->Request([
             'method' => 'account',
@@ -88,8 +85,7 @@ class Api_Trade_Payeer
         return $res['balances'];
     }
 
-
-    public function OrderCreate($req = [])
+    public function OrderCreate(array $req = []): array
     {
         $res = $this->Request([
             'method' => 'order_create',
@@ -99,8 +95,7 @@ class Api_Trade_Payeer
         return $res;
     }
 
-
-    public function OrderStatus($req = [])
+    public function OrderStatus(array $req = []): array
     {
         $res = $this->Request([
             'method' => 'order_status',
@@ -110,8 +105,7 @@ class Api_Trade_Payeer
         return $res['order'];
     }
 
-
-    public function MyOrders($req = [])
+    public function MyOrders(array $req = []): array
     {
         $res = $this->Request([
             'method' => 'my_orders',
@@ -121,7 +115,7 @@ class Api_Trade_Payeer
         return $res['items'];
     }
 
-    public function Time()
+    public function Time(): bool
     {
         $res = $this->Request([
             'method' => 'time',
@@ -130,7 +124,7 @@ class Api_Trade_Payeer
         return $res['success'];
     }
 
-    public function Ticker($req = [])
+    public function Ticker(array $req = []): array
     {
         $res = $this->Request([
             'method' => 'ticker',
@@ -140,29 +134,41 @@ class Api_Trade_Payeer
         return $res;
     }
 
-    public function Trades($pair = 'BTC_USD,BTC_RUB')
+    public function Trades(string $pair = 'BTC_USD,BTC_RUB'): array
     {
         $res = $this->Request([
             'method' => 'trades',
             'post' => [
-                'pair'=> $pair
+                'pair' => $pair
             ]
         ]);
 
         return $res;
     }
 
-    public function OrderCancel($req = [])
+    public function OrderCancel(int $order_id): bool
     {
         $res = $this->Request([
             'method' => 'order_cancel',
+            'post' => [
+                'order_id' => $order_id
+            ],
+        ]);
+
+        return $res['success'];
+    }
+
+    public function OrdersCancel(array $req): array
+    {
+        $res = $this->Request([
+            'method' => 'orders_cancel',
             'post' => $req,
         ]);
 
         return $res;
     }
 
-    public function MyHistory($req = [])
+    public function MyHistory(array $req = []): array
     {
         $res = $this->Request([
             'method' => 'my_history',
@@ -172,7 +178,7 @@ class Api_Trade_Payeer
         return $res;
     }
 
-    public function MyTrades($req = [])
+    public function MyTrades(array $req = []): array
     {
         $res = $this->Request([
             'method' => 'my_trades',
