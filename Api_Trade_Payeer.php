@@ -55,10 +55,11 @@ class Api_Trade_Payeer
     }
 
 
-    public function Info()
+    public function Info($req = [])
     {
         $res = $this->Request([
             'method' => 'info',
+            'post' => $req,
         ]);
 
         return $res;
@@ -119,4 +120,66 @@ class Api_Trade_Payeer
 
         return $res['items'];
     }
+
+    public function Time()
+    {
+        $res = $this->Request([
+            'method' => 'time',
+        ]);
+
+        return $res['success'];
+    }
+
+    public function Ticker($req = [])
+    {
+        $res = $this->Request([
+            'method' => 'ticker',
+            'post' => $req
+        ]);
+
+        return $res;
+    }
+
+    public function Trades($pair = 'BTC_USD,BTC_RUB')
+    {
+        $res = $this->Request([
+            'method' => 'trades',
+            'post' => [
+                'pair'=> $pair
+            ]
+        ]);
+
+        return $res;
+    }
+
+    public function OrderCancel($req = [])
+    {
+        $res = $this->Request([
+            'method' => 'order_cancel',
+            'post' => $req,
+        ]);
+
+        return $res;
+    }
+
+    public function MyHistory($req = [])
+    {
+        $res = $this->Request([
+            'method' => 'my_history',
+            'post' => $req,
+        ]);
+
+        return $res;
+    }
+
+    public function MyTrades($req = [])
+    {
+        $res = $this->Request([
+            'method' => 'my_trades',
+            'post' => $req,
+        ]);
+
+        return $res;
+    }
+
 }
