@@ -1,0 +1,14 @@
+{
+  "name": "martinkevich/fincana_test_task",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Ilya Martinkevich",
+      "email": "ilia1mail2martinkevi4@gmail.com"
+    }
+  ],
+  "require": {
+  }
+}
